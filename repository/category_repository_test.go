@@ -81,3 +81,29 @@ func TestCategoryRepositoryFind(t *testing.T) {
 		t.Errorf("CategoryRepository.FindBy() failed to find category by ID")
 	}
 }
+
+func TestCategoryRepositoryUpdate(t *testing.T) {
+	db.Reset()
+	categoryRepo := &CategoryRepository{
+		db: _testDB,
+	}
+
+	newCategory := model.Category{
+		Name: _testFaker.Lorem().Word(),
+	}
+	categoryRepo.Push(&newCategory)
+
+	updatedName := _testFaker.Lorem().Word()
+	newCategory.Name = updatedName
+
+	err := categoryRepo.Update(&newCategory)
+	if err != nil {
+		t.Errorf("CategoryRepository.Update() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	updatedCategory := categoryRepo.Find(newCategory.ID)
+	if updatedCategory.Name != updatedName {
+		t.Errorf("CategoryRepository.Update() failed to update category")
+	}
+}

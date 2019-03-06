@@ -39,3 +39,8 @@ func (repo *CategoryRepository) FindBy(field string, value interface{}) model.Ca
 func (repo *CategoryRepository) Find(id uint) model.Category {
 	return repo.FindBy("id", id)
 }
+
+// Update updates category model.
+func (repo *CategoryRepository) Update(data *model.Category) error {
+	return repo.db.Save(data).Error
+}
