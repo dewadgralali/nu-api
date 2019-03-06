@@ -34,3 +34,8 @@ func (repo *CategoryRepository) FindBy(field string, value interface{}) model.Ca
 
 	return category
 }
+
+// Find returns category by ID.
+func (repo *CategoryRepository) Find(id uint) model.Category {
+	return repo.FindBy("id", id)
+}

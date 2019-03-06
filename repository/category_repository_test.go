@@ -62,3 +62,22 @@ func TestCategoryRepositoryFindBy(t *testing.T) {
 		t.Errorf("CategoryRepository.FindBy() failed to find category by name")
 	}
 }
+
+func TestCategoryRepositoryFind(t *testing.T) {
+	db.Reset()
+	categoryRepo := &CategoryRepository{
+		db: _testDB,
+	}
+
+	mockedName := _testFaker.Lorem().Word()
+	mockedCategory := model.Category{
+		Name: mockedName,
+	}
+	categoryRepo.Push(&mockedCategory)
+
+	expectedCategory := categoryRepo.Find(mockedCategory.ID)
+
+	if expectedCategory.Name != mockedCategory.Name {
+		t.Errorf("CategoryRepository.FindBy() failed to find category by ID")
+	}
+}
