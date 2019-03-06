@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"nu/model"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -38,12 +39,16 @@ func Get() *gorm.DB {
 
 // Migrate creates tables for available models.
 func Migrate() {
-	Get().AutoMigrate()
+	Get().AutoMigrate(
+		model.Category{},
+	)
 }
 
 // Drop removes all tables. What else?
 func Drop() {
-	Get().DropTableIfExists()
+	Get().DropTableIfExists(
+		model.Category{},
+	)
 }
 
 // Reset runs Drop and Migrate.
