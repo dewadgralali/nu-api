@@ -1,0 +1,6 @@
+# Env
+.env
+.env.test
+
+# Compilation output
+nu

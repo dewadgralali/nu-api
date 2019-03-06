@@ -1,0 +1,9 @@
+# Git
+.git
+
+# Env
+.env.example
+.env
+
+# Compilation output
+nu
