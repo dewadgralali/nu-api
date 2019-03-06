@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCategoryRepositoryTest(t *testing.T) {
+func TestCategoryRepositoryGet(t *testing.T) {
 	db.Reset()
 
 	for i := 0; i < 5; i++ {
