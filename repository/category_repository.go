@@ -19,3 +19,8 @@ func (repo *CategoryRepository) Get() []model.Category {
 
 	return categoryList
 }
+
+// Push stores the data.
+func (repo *CategoryRepository) Push(data *model.Category) error {
+	return repo.db.Create(data).Error
+}
