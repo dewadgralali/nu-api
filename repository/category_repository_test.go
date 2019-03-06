@@ -8,7 +8,6 @@ import (
 
 func TestCategoryRepositoryGet(t *testing.T) {
 	db.Reset()
-
 	for i := 0; i < 5; i++ {
 		_testDB.Create(&model.Category{
 			Name: _testFaker.Lorem().Word(),
