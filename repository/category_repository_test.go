@@ -43,3 +43,22 @@ func TestCategoryRepositoryPush(t *testing.T) {
 		t.Errorf("CategoryRepository.Push() failed to generate ID")
 	}
 }
+
+func TestCategoryRepositoryFindBy(t *testing.T) {
+	db.Reset()
+	categoryRepo := &CategoryRepository{
+		db: _testDB,
+	}
+
+	mockedName := _testFaker.Lorem().Word()
+	mockedCategory := model.Category{
+		Name: mockedName,
+	}
+	categoryRepo.Push(&mockedCategory)
+
+	expectedCategory := categoryRepo.FindBy("name", mockedName)
+
+	if expectedCategory.ID != mockedCategory.ID {
+		t.Errorf("CategoryRepository.FindBy() failed to find category by name")
+	}
+}

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"nu/model"
 
 	"github.com/jinzhu/gorm"
@@ -23,4 +24,13 @@ func (repo *CategoryRepository) Get() []model.Category {
 // Push stores the data.
 func (repo *CategoryRepository) Push(data *model.Category) error {
 	return repo.db.Create(data).Error
+}
+
+// FindBy returns category by field-value.
+func (repo *CategoryRepository) FindBy(field string, value interface{}) model.Category {
+	category := model.Category{}
+
+	repo.db.Where(fmt.Sprintf("%s = ?", field), value).Find(&category)
+
+	return category
 }
