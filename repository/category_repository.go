@@ -44,3 +44,8 @@ func (repo *CategoryRepository) Find(id uint) model.Category {
 func (repo *CategoryRepository) Update(data *model.Category) error {
 	return repo.db.Save(data).Error
 }
+
+// Delete deletes category by ID.
+func (repo *CategoryRepository) Delete(id uint) error {
+	return repo.db.Where("id = ?", id).Delete(model.Category{}).Error
+}

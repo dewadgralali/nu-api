@@ -107,3 +107,26 @@ func TestCategoryRepositoryUpdate(t *testing.T) {
 		t.Errorf("CategoryRepository.Update() failed to update category")
 	}
 }
+
+func TestCategoryRepositoryDelete(t *testing.T) {
+	db.Reset()
+	categoryRepo := &CategoryRepository{
+		db: _testDB,
+	}
+
+	newCategory := model.Category{
+		Name: _testFaker.Lorem().Word(),
+	}
+	categoryRepo.Push(&newCategory)
+
+	err := categoryRepo.Delete(newCategory.ID)
+	if err != nil {
+		t.Errorf("CategoryRepository.Delete() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	expectedCategory := categoryRepo.Find(newCategory.ID)
+	if expectedCategory.ID > 0 {
+		t.Errorf("CategoryRepository.Delete() failed to remove category")
+	}
+}
