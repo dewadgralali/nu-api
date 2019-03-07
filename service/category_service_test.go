@@ -92,3 +92,23 @@ func TestCategoryServiceGet(t *testing.T) {
 		t.Errorf("CategoryService.Get() does not return correct len")
 	}
 }
+
+func TestCategoryServiceCreate(t *testing.T) {
+	categoryRepo := &mockCategoryRepository{}
+	categoryRepo.Construct()
+
+	categoryService := &CategoryService{
+		repo: categoryRepo,
+	}
+
+	mockedCategoryName := _testFaker.Lorem().Word()
+	newCategory, err := categoryService.Create(mockedCategoryName)
+	if err != nil {
+		t.Errorf("CategoryService.Create() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	if newCategory.ID == 0 || newCategory.Name != mockedCategoryName {
+		t.Errorf("CategoryService.Create() failed to create new category")
+	}
+}
