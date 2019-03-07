@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"nu/db"
+	"nu/handler"
+	"nu/repository"
+	"nu/service"
 	"os"
 
 	"github.com/go-chi/chi"
@@ -12,6 +15,18 @@ import (
 )
 
 const version = 1
+
+var categoryRepository *repository.CategoryRepository
+
+var categoryService *service.CategoryService
+
+func initRepositories() {
+	categoryRepository = repository.NewCategoryRepository(db.Get())
+}
+
+func initServices() {
+	categoryService = service.NewCategoryService(categoryRepository)
+}
 
 func createRouter() chi.Router {
 	r := chi.NewRouter()
@@ -26,6 +41,8 @@ func createRouter() chi.Router {
 		res, _ := json.Marshal(payload)
 		w.Write(res)
 	}))
+
+	r.Mount("/categories", (handler.NewCategoryHandler(categoryService)).GetRoutes())
 
 	return r
 }

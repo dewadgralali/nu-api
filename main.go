@@ -13,6 +13,9 @@ func main() {
 		fmt.Println("No .env file specified")
 	}
 
+	initRepositories()
+	initServices()
+
 	switch command() {
 	case "serve":
 		serveHTTP()
