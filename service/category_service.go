@@ -51,3 +51,8 @@ func (srv *CategoryService) Update(id uint, name string) error {
 	}
 	return nil
 }
+
+// Delete deletes category by ID.
+func (srv *CategoryService) Delete(id uint) error {
+	return srv.repo.Delete(id)
+}

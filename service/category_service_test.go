@@ -158,3 +158,26 @@ func TestCategoryServiceUpdate(t *testing.T) {
 		t.Errorf("CategoryService.Update() failed to update data")
 	}
 }
+
+func TestCategoryServiceDelete(t *testing.T) {
+	categoryRepo := &mockCategoryRepository{}
+	categoryRepo.Construct()
+
+	categoryService := &CategoryService{
+		repo: categoryRepo,
+	}
+
+	mockedCategoryName := _testFaker.Lorem().Word()
+	newCategory, err := categoryService.Create(mockedCategoryName)
+
+	err = categoryService.Delete(newCategory.ID)
+	if err != nil {
+		t.Errorf("CategoryService.Delete() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	expectedCategory := categoryRepo.Find(newCategory.ID)
+	if expectedCategory.ID != 0 {
+		t.Errorf("CategoryService.Delete() failed to delete data")
+	}
+}
