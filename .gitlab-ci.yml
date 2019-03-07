@@ -22,9 +22,10 @@ unit_tests:
     DB_PASSWORD: $TEST_DB_PASSWORD
   before_script:
     - go version
-    - mv . $GOPATH/src/nu
+    - cp -R $pwd $GOPATH/src/nu
   script:
     - cd $GOPATH/src/nu
+    - go get -v ./...
     - go test nu/repository -v
     - go test nu/service -v
 
@@ -40,7 +41,9 @@ build:
     DOCKER_DRIVER: overlay2
   before_script:
     - docker version
+    - cp -R $pwd $GOPATH/src/nu
   script:
+    - go get -v ./...
     - docker build . -t $CONTAINER_REGISTRY:latest
   after_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
