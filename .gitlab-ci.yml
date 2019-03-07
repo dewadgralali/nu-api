@@ -24,6 +24,14 @@ unit_tests:
     - go version
     - mkdir -p $GOPATH/src/nu
     - cp -R $(pwd)/* $GOPATH/src/nu
+    - touch $GOPATH/src/nu/.env.test
+    - echo "APP_MODE=$TEST_APP_MODE" >> $GOPATH/src/nu/.env.test
+    - echo "APP_PORT=$TEST_APP_PORT" >> $GOPATH/src/nu/.env.test
+    - echo "DB_HOST=$TEST_DB_HOST" >> $GOPATH/src/nu/.env.test
+    - echo "DB_PORT=$TEST_DB_PORT" >> $GOPATH/src/nu/.env.test
+    - echo "DB_DATABASE=$TEST_DB_DATABASE" >> $GOPATH/src/nu/.env.test
+    - echo "DB_USER=$TEST_DB_USER" >> $GOPATH/src/nu/.env.test
+    - echo "DB_PASSWORD=$TEST_DB_PASSWORD" >> $GOPATH/src/nu/.env.test
   script:
     - cd $GOPATH/src/nu
     - go get -v -t ./...
