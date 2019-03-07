@@ -27,6 +27,7 @@ unit_tests:
   script:
     - cd $GOPATH/src/nu
     - go get -v -t ./...
+    - cat .env.test
     - go test nu/repository -v
     - go test nu/service -v
 
