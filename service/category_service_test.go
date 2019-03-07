@@ -134,3 +134,27 @@ func TestCategoryServiceFind(t *testing.T) {
 		t.Errorf("CategoryService.Find() failed to return the correct data")
 	}
 }
+
+func TestCategoryServiceUpdate(t *testing.T) {
+	categoryRepo := &mockCategoryRepository{}
+	categoryRepo.Construct()
+
+	categoryService := &CategoryService{
+		repo: categoryRepo,
+	}
+
+	mockedCategoryName := _testFaker.Lorem().Word()
+	newCategory, err := categoryService.Create(mockedCategoryName)
+
+	mockedUpdatedName := _testFaker.Person().Name()
+	err = categoryService.Update(newCategory.ID, mockedUpdatedName)
+	if err != nil {
+		t.Errorf("CategoryService.Update() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	expectedCategory := categoryRepo.Find(newCategory.ID)
+	if expectedCategory.Name != mockedUpdatedName {
+		t.Errorf("CategoryService.Update() failed to update data")
+	}
+}

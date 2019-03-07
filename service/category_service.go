@@ -38,3 +38,16 @@ func (srv *CategoryService) Find(id uint) (model.Category, error) {
 	}
 	return category, nil
 }
+
+// Update updates category by ID.
+func (srv *CategoryService) Update(id uint, name string) error {
+	category := model.Category{
+		ID:   id,
+		Name: name,
+	}
+
+	if err := srv.repo.Update(&category); err != nil {
+		return err
+	}
+	return nil
+}
