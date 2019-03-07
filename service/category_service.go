@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"nu/model"
 	"nu/repository"
 )
@@ -26,4 +27,14 @@ func (srv *CategoryService) Create(name string) (model.Category, error) {
 		return model.Category{}, err
 	}
 	return newCategory, nil
+}
+
+// Find returns category by ID
+func (srv *CategoryService) Find(id uint) (model.Category, error) {
+	category := srv.repo.Find(id)
+
+	if category.ID == 0 {
+		return model.Category{}, fmt.Errorf(fmt.Sprintf("Category %d not found", id))
+	}
+	return category, nil
 }

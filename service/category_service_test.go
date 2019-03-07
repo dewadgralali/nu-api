@@ -112,3 +112,25 @@ func TestCategoryServiceCreate(t *testing.T) {
 		t.Errorf("CategoryService.Create() failed to create new category")
 	}
 }
+
+func TestCategoryServiceFind(t *testing.T) {
+	categoryRepo := &mockCategoryRepository{}
+	categoryRepo.Construct()
+
+	categoryService := &CategoryService{
+		repo: categoryRepo,
+	}
+
+	mockedCategoryName := _testFaker.Lorem().Word()
+	newCategory, err := categoryService.Create(mockedCategoryName)
+
+	expectedCategory, err := categoryService.Find(newCategory.ID)
+	if err != nil {
+		t.Errorf("CategoryService.Find() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	if expectedCategory.Name != mockedCategoryName {
+		t.Errorf("CategoryService.Find() failed to return the correct data")
+	}
+}
