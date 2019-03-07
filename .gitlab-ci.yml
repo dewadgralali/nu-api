@@ -22,7 +22,9 @@ unit_tests:
     DB_PASSWORD: $TEST_DB_PASSWORD
   before_script:
     - go version
+    - mv . $GOPATH/src/nu
   script:
+    - cd $GOPATH/src/nu
     - go test nu/repository -v
     - go test nu/service -v
 
