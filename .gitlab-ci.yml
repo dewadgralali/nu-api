@@ -12,24 +12,22 @@ unit_tests:
   image: golang
   only:
     - master
+  variables:
+    APP_MODE: $TEST_APP_MODE
+    APP_PORT: $TEST_APP_PORT
+    DB_HOST: $TEST_DB_HOST
+    DB_DATABASE: $TEST_DB_DATABASE
+    DB_USER: $TEST_DB_USER
+    DB_PASSWORD: $TEST_DB_PASSWORD
   before_script:
     - go version
     - mkdir -p $GOPATH/src/nu
     - cp -R $(pwd)/* $GOPATH/src/nu
-    - touch $GOPATH/src/nu/.env.test
-    - echo "APP_MODE=$TEST_APP_MODE" >> $GOPATH/src/nu/.env.test
-    - echo "APP_PORT=$TEST_APP_PORT" >> $GOPATH/src/nu/.env.test
-    - echo "DB_HOST=$TEST_DB_HOST" >> $GOPATH/src/nu/.env.test
-    - echo "DB_PORT=$TEST_DB_PORT" >> $GOPATH/src/nu/.env.test
-    - echo "DB_DATABASE=$TEST_DB_DATABASE" >> $GOPATH/src/nu/.env.test
-    - echo "DB_USERNAME=$TEST_DB_USERNAME" >> $GOPATH/src/nu/.env.test
-    - echo "DB_PASSWORD=$TEST_DB_PASSWORD" >> $GOPATH/src/nu/.env.test
   script:
     - cd $GOPATH/src/nu
     - go get -v -t ./...
-    - cat .env.test
-    - go test nu/repository -v
-    - go test nu/service -v
+    - go test -v nu/repository
+    - go test -v nu/service
 
 build:
   stage: build
