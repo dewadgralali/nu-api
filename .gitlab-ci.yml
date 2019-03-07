@@ -69,7 +69,7 @@ deploy:
       docker pull $CONTAINER_REGISTRY:latest;
       docker create --name $CONTAINER_NAME \
         --network nu_network \
-        -p 8000:8000 \
+        -p 8000:$PROD_APP_PORT \
         -e APP_MODE=$PROD_APP_MODE \
         -e APP_PORT=$PROD_APP_PORT \
         -e DB_HOST=$PROD_DB_HOST \
