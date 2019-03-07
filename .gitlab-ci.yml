@@ -45,7 +45,6 @@ build:
     - mkdir -p $GOPATH/src/nu
     - cp -R $(pwd)/* $GOPATH/src/nu
   script:
-    - go get -v -t ./...
     - docker build . -t $CONTAINER_REGISTRY:latest
   after_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
