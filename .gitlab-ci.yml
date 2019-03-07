@@ -29,6 +29,7 @@ unit_tests:
     - go get -v -t ./...
     - go test -v nu/repository
     - go test -v nu/service
+    - go test -v nu/handler
 
 build:
   stage: build
