@@ -1,0 +1,79 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  - CONTAINER_REGISTRY: registry.gitlab.com/dewadg/nu-api
+  - CONTAINER_NAME: nu-api
+
+unit_tests:
+  stage: test
+  image: golang
+  only:
+    - master
+  variables:
+    APP_MODE: $TEST_APP_MODE
+    APP_PORT: $TEST_APP_PORT
+    DB_HOST: $TEST_DB_HOST
+    DB_PORT: $TEST_DB_PORT
+    DB_DATABASE: $TEST_DB_DATABASE
+    DB_USER: $TEST_DB_USER
+    DB_PASSWORD: $TEST_DB_PASSWORD
+  before_script:
+    - go version
+  script:
+    - go test nu/repository -v
+    - go test nu/service -v
+
+build:
+  stage: build
+  image: docker
+  only:
+    - master
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - docker version
+  script:
+    - docker build . -t $CONTAINER_REGISTRY:latest
+  after_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker push $CONTAINER_REGISTRY:latest
+
+deploy:
+  stage: deploy
+  image: ubuntu:latest
+  only:
+    - master
+  before_script:
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - echo "$PROD_SERVER_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $PROD_SERVER_ADDRESS >> ~/.ssh/known_hosts
+  script:
+    script:
+    - |
+      ssh $PROD_SERVER_USER@$PROD_SERVER_ADDRESS "
+        docker rm -f $CONTAINER_NAME 2> /dev/null;
+        docker pull $CONTAINER_REGISTRY:latest;
+        docker create --name $CONTAINER_NAME \
+          --network nu_network \
+          -p 8000:8000 \
+          -e APP_MODE=$PROD_APP_MODE \
+          -e APP_PORT=$PROD_APP_PORT \
+          -e DB_HOST=$PROD_DB_HOST \
+          -e DB_PORT=$PROD_DB_PORT \
+          -e DB_DATABASE=$PROD_DB_DATABASE \
+          -e DB_USERNAME=$PROD_DB_USERNAME \
+          -e DB_PASSWORD=$PROD_DB_PASSWORD \
+          $CONTAINER_REGISTRY;
+        docker start $CONTAINER_NAME;
+        docker exec -d $CONTAINER_NAME nu migrate;
+        exit;
+      "
