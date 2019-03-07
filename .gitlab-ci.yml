@@ -75,7 +75,7 @@ deploy:
         -e DB_HOST=$PROD_DB_HOST \
         -e DB_PORT=$PROD_DB_PORT \
         -e DB_DATABASE=$PROD_DB_DATABASE \
-        -e DB_USERNAME=$PROD_DB_USERNAME \
+        -e DB_USER=$PROD_DB_USER \
         -e DB_PASSWORD=$PROD_DB_PASSWORD \
         $CONTAINER_REGISTRY;
       docker start $CONTAINER_NAME;
