@@ -28,6 +28,7 @@ func (hndlr *CategoryHandler) GetRoutes() chi.Router {
 	r.Route("/{categoryID}", func(r chi.Router) {
 		r.Use(hndlr.Context)
 		r.Get("/", hndlr.GetOne)
+		r.Patch("/", hndlr.Update)
 	})
 
 	return r
@@ -86,4 +87,30 @@ func (hndlr *CategoryHandler) GetOne(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Render(w, r, object.CreateCategoryResponse(category))
+}
+
+// Update doc
+func (hndlr *CategoryHandler) Update(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	category, ok := ctx.Value(categoryCtx).(model.Category)
+	if !ok {
+		render.Render(w, r, createUnprocessableEntityResponse(""))
+		return
+	}
+
+	payload := object.UpdateCategoryRequest{}
+	if err := render.Bind(r, &payload); err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+		return
+	}
+
+	err := hndlr.srv.Update(category.ID, payload.Name)
+	if err != nil {
+		render.Render(w, r, createInternalServerErrorResponse(err.Error()))
+		return
+	}
+
+	updatedCategory, _ := hndlr.srv.Find(category.ID)
+
+	render.Render(w, r, object.CreateCategoryResponse(updatedCategory))
 }

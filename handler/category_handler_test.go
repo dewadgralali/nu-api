@@ -165,3 +165,42 @@ func TestCategoryHandlerGetOne(t *testing.T) {
 
 	assert.JSONEq(t, expectedResponse, w.Body.String())
 }
+
+func TestCategoryHandlerUpdate(t *testing.T) {
+	expectedID := 1
+
+	categoryHandler := CategoryHandler{
+		srv: &mockCategoryService{},
+	}
+
+	payload := map[string]string{
+		"name": "Category 1",
+	}
+	reqData, _ := json.Marshal(payload)
+
+	handler := http.HandlerFunc(categoryHandler.Update)
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("PATCH", "/", bytes.NewBuffer(reqData))
+
+	rCtx := chi.NewRouteContext()
+	rCtx.URLParams.Add("categoryID", strconv.Itoa(expectedID))
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rCtx))
+	r.Header.Set("Content-Type", "application/json")
+
+	categoryHandler.Context(handler).ServeHTTP(w, r)
+
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("CategoryHandler.GetOne() failed with status %d", status)
+	}
+
+	expectedResponse := string(`
+		{
+			"id": 1,
+			"name": "Category 1",
+			"createdAt": "2006-01-02 15:04:05",
+			"updatedAt": "2006-01-02 15:04:05"
+		}
+	`)
+
+	assert.JSONEq(t, expectedResponse, w.Body.String())
+}
