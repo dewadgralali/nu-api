@@ -26,14 +26,15 @@ func (hndlr *CategoryHandler) GetRoutes() chi.Router {
 	r.Get("/", hndlr.Get)
 	r.Post("/", hndlr.Store)
 	r.Route("/{categoryID}", func(r chi.Router) {
-		r.Use(hndlr.context)
+		r.Use(hndlr.Context)
 		r.Get("/", hndlr.GetOne)
 	})
 
 	return r
 }
 
-func (hndlr *CategoryHandler) context(next http.Handler) http.Handler {
+// Context of these routes.
+func (hndlr *CategoryHandler) Context(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		categoryID, _ := strconv.Atoi(chi.URLParam(r, "categoryID"))
 		category, err := hndlr.srv.Find(uint(categoryID))
