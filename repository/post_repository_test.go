@@ -120,10 +120,35 @@ func TestRepositoryUpdate(t *testing.T) {
 	updatedPost.Slug = "Hellooo"
 	updatedPost.MDContent = "Hellooo"
 
-	postRepository.Update(&updatedPost)
-	expectedPost := postRepository.Find(3)
+	err := postRepository.Update(&updatedPost)
+	if err != nil {
+		t.Errorf("PostRepository.Update() failed with error")
+		t.Errorf(err.Error())
+	}
 
+	expectedPost := postRepository.Find(3)
 	if expectedPost.Title != "Hellooo" || expectedPost.Slug != "Hellooo" || expectedPost.MDContent != "Hellooo" {
 		t.Errorf("PostRepository.Update() failed to update post")
+	}
+}
+
+func TestRepositoryDelete(t *testing.T) {
+	db.Reset()
+	generateCategories()
+	generatePosts()
+
+	postRepository := &PostRepository{
+		db: _testDB,
+	}
+
+	err := postRepository.Delete(3)
+	if err != nil {
+		t.Errorf("PostRepository.Delete() failed with error")
+		t.Errorf(err.Error())
+	}
+
+	expectedPost := postRepository.Find(3)
+	if expectedPost.ID != 0 {
+		t.Errorf("PostRepository.Delete() failed to remove post")
 	}
 }

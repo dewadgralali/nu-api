@@ -44,3 +44,8 @@ func (repo *PostRepository) Find(id uint) model.Post {
 func (repo *PostRepository) Update(data *model.Post) error {
 	return repo.db.Save(data).Error
 }
+
+// Delete deletes post by ID.
+func (repo *PostRepository) Delete(id uint) error {
+	return repo.db.Where("id = ?", id).Delete(&model.Post{}).Error
+}
