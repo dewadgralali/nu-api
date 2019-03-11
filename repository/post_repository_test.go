@@ -44,3 +44,32 @@ func TestPostRepositoryGet(t *testing.T) {
 		t.Errorf("PostRepository.Get() doesn't return expected len 5")
 	}
 }
+
+func TestPostRepositoryPush(t *testing.T) {
+	db.Reset()
+	generateCategories()
+
+	categoryRepository := &CategoryRepository{
+		db: _testDB,
+	}
+	postRepository := &PostRepository{
+		db: _testDB,
+	}
+
+	newPost := model.Post{
+		Title:      _testFaker.Lorem().Word(),
+		Slug:       _testFaker.Lorem().Word(),
+		MDContent:  _testFaker.Lorem().Word(),
+		Categories: categoryRepository.Get(),
+	}
+
+	err := postRepository.Push(&newPost)
+
+	if err != nil {
+		t.Errorf("PostRepository.Push() failed with error")
+		t.Errorf(err.Error())
+	}
+	if newPost.ID == 0 {
+		t.Errorf("PostRepository.Push() failed to generate ID")
+	}
+}

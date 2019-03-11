@@ -19,3 +19,8 @@ func (repo *PostRepository) Get() []model.Post {
 
 	return postList
 }
+
+// Push stores the data.
+func (repo *PostRepository) Push(data *model.Post) error {
+	return repo.db.Create(data).Error
+}
