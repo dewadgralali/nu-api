@@ -41,6 +41,7 @@ func Get() *gorm.DB {
 func Migrate() {
 	Get().AutoMigrate(
 		model.Category{},
+		model.Post{},
 	)
 }
 
@@ -48,6 +49,7 @@ func Migrate() {
 func Drop() {
 	Get().DropTableIfExists(
 		model.Category{},
+		model.Post{},
 	)
 }
 
