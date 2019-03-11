@@ -86,7 +86,7 @@ func TestPostRepositoryFindBy(t *testing.T) {
 	post := postRepository.FindBy("id", 1)
 
 	if post.ID != 1 {
-		t.Errorf("CategoryRepository.FindBy() failed to find post by ID")
+		t.Errorf("PostRepository.FindBy() failed to find post by ID")
 	}
 }
 
@@ -102,6 +102,28 @@ func TestPostRepositoryFind(t *testing.T) {
 	post := postRepository.Find(1)
 
 	if post.ID != 1 {
-		t.Errorf("CategoryRepository.Find() failed to find post by ID")
+		t.Errorf("PostRepository.Find() failed to find post by ID")
+	}
+}
+
+func TestRepositoryUpdate(t *testing.T) {
+	db.Reset()
+	generateCategories()
+	generatePosts()
+
+	postRepository := &PostRepository{
+		db: _testDB,
+	}
+
+	updatedPost := postRepository.Find(3)
+	updatedPost.Title = "Hellooo"
+	updatedPost.Slug = "Hellooo"
+	updatedPost.MDContent = "Hellooo"
+
+	postRepository.Update(&updatedPost)
+	expectedPost := postRepository.Find(3)
+
+	if expectedPost.Title != "Hellooo" || expectedPost.Slug != "Hellooo" || expectedPost.MDContent != "Hellooo" {
+		t.Errorf("PostRepository.Update() failed to update post")
 	}
 }

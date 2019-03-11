@@ -39,3 +39,8 @@ func (repo *PostRepository) FindBy(field string, value interface{}) model.Post {
 func (repo *PostRepository) Find(id uint) model.Post {
 	return repo.FindBy("id", id)
 }
+
+// Update updates post model.
+func (repo *PostRepository) Update(data *model.Post) error {
+	return repo.db.Save(data).Error
+}
