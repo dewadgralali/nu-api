@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"nu/model"
 	"nu/object"
 	"nu/service"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -22,8 +25,26 @@ func (hndlr *CategoryHandler) GetRoutes() chi.Router {
 
 	r.Get("/", hndlr.Get)
 	r.Post("/", hndlr.Store)
+	r.Route("/{categoryID}", func(r chi.Router) {
+		r.Use(hndlr.context)
+		r.Get("/", hndlr.GetOne)
+	})
 
 	return r
+}
+
+func (hndlr *CategoryHandler) context(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		categoryID, _ := strconv.Atoi(chi.URLParam(r, "categoryID"))
+		category, err := hndlr.srv.Find(uint(categoryID))
+		if err != nil {
+			render.Render(w, r, createNotFoundResponse(err.Error()))
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), categoryCtx, category)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 // Get doc
@@ -51,5 +72,17 @@ func (hndlr *CategoryHandler) Store(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Status(r, http.StatusCreated)
+	render.Render(w, r, object.CreateCategoryResponse(category))
+}
+
+// GetOne doc
+func (hndlr *CategoryHandler) GetOne(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	category, ok := ctx.Value(categoryCtx).(model.Category)
+	if !ok {
+		render.Render(w, r, createUnprocessableEntityResponse(""))
+		return
+	}
+
 	render.Render(w, r, object.CreateCategoryResponse(category))
 }
