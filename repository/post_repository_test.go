@@ -73,3 +73,35 @@ func TestPostRepositoryPush(t *testing.T) {
 		t.Errorf("PostRepository.Push() failed to generate ID")
 	}
 }
+
+func TestPostRepositoryFindBy(t *testing.T) {
+	db.Reset()
+	generateCategories()
+	generatePosts()
+
+	postRepository := &PostRepository{
+		db: _testDB,
+	}
+
+	post := postRepository.FindBy("id", 1)
+
+	if post.ID != 1 {
+		t.Errorf("CategoryRepository.FindBy() failed to find post by ID")
+	}
+}
+
+func TestPostRepositoryFind(t *testing.T) {
+	db.Reset()
+	generateCategories()
+	generatePosts()
+
+	postRepository := &PostRepository{
+		db: _testDB,
+	}
+
+	post := postRepository.Find(1)
+
+	if post.ID != 1 {
+		t.Errorf("CategoryRepository.Find() failed to find post by ID")
+	}
+}

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"nu/model"
 
 	"github.com/jinzhu/gorm"
@@ -23,4 +24,18 @@ func (repo *PostRepository) Get() []model.Post {
 // Push stores the data.
 func (repo *PostRepository) Push(data *model.Post) error {
 	return repo.db.Create(data).Error
+}
+
+// FindBy returns post by field-value.
+func (repo *PostRepository) FindBy(field string, value interface{}) model.Post {
+	post := model.Post{}
+
+	repo.db.Where(fmt.Sprintf("%s = ?", field), value).First(&post)
+
+	return post
+}
+
+// Find returns post by ID.
+func (repo *PostRepository) Find(id uint) model.Post {
+	return repo.FindBy("id", id)
 }
