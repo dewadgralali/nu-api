@@ -12,3 +12,14 @@ type CategoryRepositoryContract interface {
 	Update(data *model.Category) error
 	Delete(id uint) error
 }
+
+// PostRepositoryContract represents interface for
+// post repository
+type PostRepositoryContract interface {
+	Get() []model.Post
+	Push(data *model.Post) error
+	FindBy(field string, value interface{}) model.Post
+	Find(id uint) model.Post
+	Update(data *model.Post) error
+	Delete(id uint) error
+}
