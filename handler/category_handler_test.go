@@ -2,13 +2,17 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"nu/model"
+	"strconv"
 	"testing"
 	"time"
+
+	"github.com/go-chi/chi"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -42,11 +46,12 @@ func (srv *mockCategoryService) Create(name string) (model.Category, error) {
 }
 
 func (srv *mockCategoryService) Find(id uint) (model.Category, error) {
+	timeData, _ := time.Parse("2006-01-02 15:04:05", "2006-01-02 15:04:05")
 	return model.Category{
 		ID:        id,
-		Name:      _testFaker.Lorem().Word(),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Name:      "Category 1",
+		CreatedAt: timeData,
+		UpdatedAt: timeData,
 	}, nil
 }
 
@@ -63,16 +68,11 @@ func TestCategoryHandlerGet(t *testing.T) {
 		srv: &mockCategoryService{},
 	}
 
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Errorf("CategoryHandler.Get() failed with error")
-		t.Errorf(err.Error())
-	}
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	http.HandlerFunc(categoryHandler.Get).ServeHTTP(w, r)
 
-	rr := httptest.NewRecorder()
-	http.HandlerFunc(categoryHandler.Get).ServeHTTP(rr, req)
-
-	if status := rr.Code; status != 200 {
+	if status := w.Code; status != 200 {
 		t.Errorf("CategoryHandler.Get() failed with status code %d", status)
 	}
 
@@ -99,7 +99,7 @@ func TestCategoryHandlerGet(t *testing.T) {
 		]
 	`)
 
-	assert.JSONEq(t, expectedResponse, rr.Body.String())
+	assert.JSONEq(t, expectedResponse, w.Body.String())
 }
 
 func TestCategoryHandlerStore(t *testing.T) {
@@ -111,17 +111,13 @@ func TestCategoryHandlerStore(t *testing.T) {
 	}
 	reqData, _ := json.Marshal(payload)
 
-	req, err := http.NewRequest("POST", "/", bytes.NewBuffer(reqData))
-	if err != nil {
-		t.Errorf("CategoryService.Store() failed with error")
-		t.Errorf(err.Error())
-	}
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("POST", "/", bytes.NewBuffer(reqData))
+	r.Header.Set("Content-Type", "application/json")
 
-	rr := httptest.NewRecorder()
-	req.Header.Set("Content-Type", "application/json")
-	http.HandlerFunc(categoryHandler.Store).ServeHTTP(rr, req)
+	http.HandlerFunc(categoryHandler.Store).ServeHTTP(w, r)
 
-	if status := rr.Code; status != http.StatusCreated {
+	if status := w.Code; status != http.StatusCreated {
 		t.Errorf("CategoryService.Store() failed with status code %d", status)
 	}
 
@@ -134,5 +130,38 @@ func TestCategoryHandlerStore(t *testing.T) {
 		}
 	`)
 
-	assert.JSONEq(t, expectedResponse, rr.Body.String())
+	assert.JSONEq(t, expectedResponse, w.Body.String())
+}
+
+func TestCategoryHandlerGetOne(t *testing.T) {
+	expectedID := 1
+
+	categoryHandler := CategoryHandler{
+		srv: &mockCategoryService{},
+	}
+
+	handler := http.HandlerFunc(categoryHandler.GetOne)
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+
+	rCtx := chi.NewRouteContext()
+	rCtx.URLParams.Add("categoryID", strconv.Itoa(expectedID))
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rCtx))
+
+	categoryHandler.Context(handler).ServeHTTP(w, r)
+
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("CategoryHandler.GetOne() failed with status %d", status)
+	}
+
+	expectedResponse := string(`
+		{
+			"id": 1,
+			"name": "Category 1",
+			"createdAt": "2006-01-02 15:04:05",
+			"updatedAt": "2006-01-02 15:04:05"
+		}
+	`)
+
+	assert.JSONEq(t, expectedResponse, w.Body.String())
 }
