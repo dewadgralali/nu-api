@@ -204,3 +204,25 @@ func TestCategoryHandlerUpdate(t *testing.T) {
 
 	assert.JSONEq(t, expectedResponse, w.Body.String())
 }
+
+func TestCategoryHandlerDestroy(t *testing.T) {
+	expectedID := 1
+
+	categoryHandler := CategoryHandler{
+		srv: &mockCategoryService{},
+	}
+
+	handler := http.HandlerFunc(categoryHandler.Destroy)
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("DELETE", "/", nil)
+
+	rCtx := chi.NewRouteContext()
+	rCtx.URLParams.Add("categoryID", strconv.Itoa(expectedID))
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rCtx))
+
+	categoryHandler.Context(handler).ServeHTTP(w, r)
+
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("CategoryHandler.GetOne() failed with status %d", status)
+	}
+}

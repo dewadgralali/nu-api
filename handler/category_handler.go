@@ -29,6 +29,7 @@ func (hndlr *CategoryHandler) GetRoutes() chi.Router {
 		r.Use(hndlr.Context)
 		r.Get("/", hndlr.GetOne)
 		r.Patch("/", hndlr.Update)
+		r.Delete("/", hndlr.Destroy)
 	})
 
 	return r
@@ -113,4 +114,22 @@ func (hndlr *CategoryHandler) Update(w http.ResponseWriter, r *http.Request) {
 	updatedCategory, _ := hndlr.srv.Find(category.ID)
 
 	render.Render(w, r, object.CreateCategoryResponse(updatedCategory))
+}
+
+// Destroy doc
+func (hndlr *CategoryHandler) Destroy(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	category, ok := ctx.Value(categoryCtx).(model.Category)
+	if !ok {
+		render.Render(w, r, createUnprocessableEntityResponse(""))
+		return
+	}
+
+	err := hndlr.srv.Delete(category.ID)
+	if err != nil {
+		render.Render(w, r, createInternalServerErrorResponse(err.Error()))
+		return
+	}
+
+	render.JSON(w, r, "")
 }
