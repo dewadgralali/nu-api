@@ -31,9 +31,9 @@ unit_tests:
   script:
     - cd $GOPATH/src/nu
     - go get -v -t ./...
-    - go test -v nu/repository
-    - go test -v nu/service
-    - go test -v nu/handler
+    - go test -v -cover nu/repository
+    - go test -v -cover nu/service
+    - go test -v -cover nu/handler
 
 build:
   stage: build
