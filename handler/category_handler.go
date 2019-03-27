@@ -23,7 +23,7 @@ type CategoryHandler struct {
 func (hndlr *CategoryHandler) GetRoutes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", hndlr.Get)
+	r.Get("/get-categories", hndlr.Get)
 	r.Post("/", hndlr.Store)
 	r.Route("/{categoryID}", func(r chi.Router) {
 		r.Use(hndlr.Context)
