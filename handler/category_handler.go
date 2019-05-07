@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"nu/model"
-	"nu/object"
-	"nu/service"
+	"github.com/dewadg/nu/model"
+	"github.com/dewadg/nu/object"
+	"github.com/dewadg/nu/service"
 	"strconv"
 
 	"github.com/go-chi/chi"

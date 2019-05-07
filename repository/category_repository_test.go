@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"nu/db"
-	"nu/model"
+	"github.com/dewadg/nu/db"
+	"github.com/dewadg/nu/model"
 	"testing"
 )
 

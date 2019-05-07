@@ -1,7 +1,7 @@
 package service
 
 import (
-	"nu/model"
+	"github.com/dewadg/nu/model"
 	"testing"
 
 	"github.com/jaswdr/faker"

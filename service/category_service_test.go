@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"nu/model"
+	"github.com/dewadg/nu/model"
 	"testing"
 )
 

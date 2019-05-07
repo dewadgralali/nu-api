@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"nu/db"
-	"nu/handler"
+	"github.com/dewadg/nu/db"
+	"github.com/dewadg/nu/handler"
 	"os"
 
 	"github.com/go-chi/chi"
@@ -21,7 +21,7 @@ func createRouter() chi.Router {
 
 	r.Get("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload := map[string]interface{}{
-			"name":    "Nu API",
+			"name":    "github.com/dewadg/nu API",
 			"version": version,
 		}
 		res, _ := json.Marshal(payload)

@@ -1,6 +1,6 @@
 package handler
 
-import "nu/service"
+import "github.com/dewadg/nu/service"
 
 // NewCategoryHandler returns new instance
 // of CategoryHandler

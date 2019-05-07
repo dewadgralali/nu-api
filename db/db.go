@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"nu/model"
+	"github.com/dewadg/nu/model"
 	"os"
 
 	"github.com/jinzhu/gorm"

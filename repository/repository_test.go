@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"nu/db"
+	"github.com/dewadg/nu/db"
 	"testing"
 
 	"github.com/jaswdr/faker"

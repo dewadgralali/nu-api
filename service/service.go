@@ -1,6 +1,6 @@
 package service
 
-import "nu/repository"
+import "github.com/dewadg/nu/repository"
 
 // NewCategoryService returns new CategoryService instance
 func NewCategoryService(repo repository.CategoryRepositoryContract) *CategoryService {

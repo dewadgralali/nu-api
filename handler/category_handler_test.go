@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"nu/model"
+	"github.com/dewadg/nu/model"
 	"strconv"
 	"testing"
 	"time"

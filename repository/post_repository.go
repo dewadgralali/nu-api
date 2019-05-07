@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"nu/model"
+	"github.com/dewadg/nu/model"
 
 	"github.com/jinzhu/gorm"
 )
