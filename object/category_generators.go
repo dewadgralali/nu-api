@@ -1,7 +1,7 @@
 package object
 
 import (
-	"github.com/dewadg/nu/model"
+	"github.com/dewadg/nu-api/model"
 
 	"github.com/go-chi/render"
 )

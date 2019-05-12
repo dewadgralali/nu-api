@@ -1,6 +1,6 @@
 FROM golang AS build
 
-WORKDIR /go/src/github.com/dewadg/nu
+WORKDIR /go/src/github.com/dewadg/nu-api
 
 ADD . .
 
@@ -11,7 +11,7 @@ FROM alpine
 
 WORKDIR /usr/local/bin
 
-COPY --from=build /go/src/github.com/dewadg/nu/nu .
+COPY --from=build /go/src/github.com/dewadg/nu-api/nu .
 RUN chmod +x ./nu
 
 CMD ["nu", "serve"]

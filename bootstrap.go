@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/dewadg/nu/db"
-	"github.com/dewadg/nu/repository"
-	"github.com/dewadg/nu/service"
+	"github.com/dewadg/nu-api/db"
+	"github.com/dewadg/nu-api/repository"
+	"github.com/dewadg/nu-api/service"
 )
 
 var categoryRepository *repository.CategoryRepository
