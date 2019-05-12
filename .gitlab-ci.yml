@@ -10,8 +10,6 @@ variables:
 unit_tests:
   stage: test
   image: golang
-  only:
-    - master
   services:
     - mariadb:10.2
   variables:
