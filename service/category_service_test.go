@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	localMock "github.com/dewadg/nu/mock"
-	"github.com/dewadg/nu/model"
+	localMock "github.com/dewadg/nu-api/mock"
+	"github.com/dewadg/nu-api/model"
 )
 
 func TestCategoryServiceGet(t *testing.T) {

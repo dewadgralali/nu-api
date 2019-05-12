@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"github.com/dewadg/nu/model"
+	"github.com/dewadg/nu-api/model"
 	"github.com/stretchr/testify/mock"
 )
 

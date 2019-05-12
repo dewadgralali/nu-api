@@ -1,6 +1,6 @@
 package service
 
-import "github.com/dewadg/nu/model"
+import "github.com/dewadg/nu-api/model"
 
 // CategoryServiceContract represents interface for
 // category service

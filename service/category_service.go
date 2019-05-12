@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/dewadg/nu/model"
-	"github.com/dewadg/nu/repository"
+	"github.com/dewadg/nu-api/model"
+	"github.com/dewadg/nu-api/repository"
 )
 
 // CategoryService represents service layer for

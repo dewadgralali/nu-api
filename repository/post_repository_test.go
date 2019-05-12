@@ -2,8 +2,8 @@ package repository
 
 import (
 	"fmt"
-	"github.com/dewadg/nu/db"
-	"github.com/dewadg/nu/model"
+	"github.com/dewadg/nu-api/db"
+	"github.com/dewadg/nu-api/model"
 	"testing"
 )
 

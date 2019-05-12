@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/dewadg/nu/model"
+import "github.com/dewadg/nu-api/model"
 
 // CategoryRepositoryContract represents interface for
 // category repository
