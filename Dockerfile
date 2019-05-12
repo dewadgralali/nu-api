@@ -11,7 +11,7 @@ FROM alpine
 
 WORKDIR /usr/local/bin
 
-COPY --from=build /go/src/github.com/dewadg/nu-api/nu .
+COPY --from=build /go/src/github.com/dewadg/nu-api/nu-api ./nu
 RUN chmod +x ./nu
 
 CMD ["nu", "serve"]
