@@ -1,183 +1,123 @@
 package service
 
 import (
-	"fmt"
-	"github.com/dewadg/nu/model"
+	"reflect"
 	"testing"
+
+	localMock "github.com/dewadg/nu/mock"
+	"github.com/dewadg/nu/model"
 )
 
-func (repo *mockCategoryRepository) Construct() {
-	repo.categoryList = make([]model.Category, 0)
-
-	for i := 0; i < 5; i++ {
-		repo.categoryList = append(repo.categoryList, model.Category{
-			ID:   uint((i + 1)),
-			Name: _testFaker.Lorem().Word(),
-		})
-	}
-}
-
-func (repo *mockCategoryRepository) Get() []model.Category {
-	return repo.categoryList
-}
-
-func (repo *mockCategoryRepository) Push(data *model.Category) error {
-	newID := func() uint {
-		temp := uint(len(repo.categoryList))
-
-		for {
-			for _, category := range repo.categoryList {
-				if category.ID == temp {
-					temp++
-					continue
-				}
-			}
-			return temp
-		}
-	}
-
-	data.ID = newID()
-	repo.categoryList = append(repo.categoryList, *data)
-
-	return nil
-}
-
-func (repo *mockCategoryRepository) FindBy(field string, value interface{}) model.Category {
-	for _, category := range repo.categoryList {
-		if field == "id" && category.ID == value {
-			return category
-		}
-		if field == "name" && category.Name == value {
-			return category
-		}
-	}
-	return model.Category{}
-}
-
-func (repo *mockCategoryRepository) Find(id uint) model.Category {
-	return repo.FindBy("id", id)
-}
-
-func (repo *mockCategoryRepository) Update(data *model.Category) error {
-	for i, category := range repo.categoryList {
-		if category.ID == data.ID {
-			updatedCat := &repo.categoryList[i]
-			updatedCat.Name = data.Name
-			return nil
-		}
-	}
-	return fmt.Errorf(fmt.Sprintf("Category %d not found", data.ID))
-}
-
-func (repo *mockCategoryRepository) Delete(id uint) error {
-	for i, category := range repo.categoryList {
-		if category.ID == id {
-			repo.categoryList = append(repo.categoryList[:i], repo.categoryList[(i+1):]...)
-			return nil
-		}
-	}
-	return fmt.Errorf(fmt.Sprintf("Category %d not found", id))
-}
-
 func TestCategoryServiceGet(t *testing.T) {
-	categoryRepo := &mockCategoryRepository{}
-	categoryRepo.Construct()
-
+	categoryRepo := &localMock.CategoryRepositoryMock{}
 	categoryService := &CategoryService{
 		repo: categoryRepo,
 	}
 
-	categoryList := categoryService.Get()
-	if len(categoryList) != 5 {
-		t.Errorf("CategoryService.Get() does not return correct len")
+	expected := []model.Category{
+		model.Category{
+			ID:   1,
+			Name: _testFaker.Person().Name(),
+		},
+		model.Category{
+			ID:   2,
+			Name: _testFaker.Person().Name(),
+		},
+		model.Category{
+			ID:   3,
+			Name: _testFaker.Person().Name(),
+		},
+	}
+	categoryRepo.On("Get").Return(expected)
+
+	actual := categoryService.Get()
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("CategoryService.Get() does not return expected data")
 	}
 }
 
 func TestCategoryServiceCreate(t *testing.T) {
-	categoryRepo := &mockCategoryRepository{}
-	categoryRepo.Construct()
-
+	categoryRepo := &localMock.CategoryRepositoryMock{}
 	categoryService := &CategoryService{
 		repo: categoryRepo,
 	}
 
-	mockedCategoryName := _testFaker.Lorem().Word()
-	newCategory, err := categoryService.Create(mockedCategoryName)
+	name := _testFaker.Lorem().Word()
+	expected := model.Category{
+		ID:   0,
+		Name: name,
+	}
+	payload := model.Category{
+		Name: name,
+	}
+	categoryRepo.On("Push", &payload).Return(nil)
+
+	actual, err := categoryService.Create(name)
 	if err != nil {
 		t.Errorf("CategoryService.Create() failed with error")
 		t.Errorf(err.Error())
 	}
 
-	if newCategory.ID == 0 || newCategory.Name != mockedCategoryName {
-		t.Errorf("CategoryService.Create() failed to create new category")
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("CategoryService.Create() failed to save data")
 	}
 }
 
 func TestCategoryServiceFind(t *testing.T) {
-	categoryRepo := &mockCategoryRepository{}
-	categoryRepo.Construct()
-
+	categoryRepo := &localMock.CategoryRepositoryMock{}
 	categoryService := &CategoryService{
 		repo: categoryRepo,
 	}
 
-	mockedCategoryName := _testFaker.Lorem().Word()
-	newCategory, err := categoryService.Create(mockedCategoryName)
+	expected := model.Category{
+		ID:   1,
+		Name: _testFaker.Person().Name(),
+	}
+	payload := uint(1)
+	categoryRepo.On("Find", payload).Return(expected)
 
-	expectedCategory, err := categoryService.Find(newCategory.ID)
+	actual, err := categoryService.Find(payload)
 	if err != nil {
 		t.Errorf("CategoryService.Find() failed with error")
 		t.Errorf(err.Error())
 	}
 
-	if expectedCategory.Name != mockedCategoryName {
+	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("CategoryService.Find() failed to return the correct data")
 	}
 }
 
 func TestCategoryServiceUpdate(t *testing.T) {
-	categoryRepo := &mockCategoryRepository{}
-	categoryRepo.Construct()
-
+	categoryRepo := &localMock.CategoryRepositoryMock{}
 	categoryService := &CategoryService{
 		repo: categoryRepo,
 	}
 
-	mockedCategoryName := _testFaker.Lorem().Word()
-	newCategory, err := categoryService.Create(mockedCategoryName)
+	payload := model.Category{
+		ID:   uint(1),
+		Name: _testFaker.Person().Name(),
+	}
+	categoryRepo.On("Update", &payload).Return(nil)
 
-	mockedUpdatedName := _testFaker.Person().Name()
-	err = categoryService.Update(newCategory.ID, mockedUpdatedName)
+	err := categoryService.Update(payload.ID, payload.Name)
 	if err != nil {
 		t.Errorf("CategoryService.Update() failed with error")
 		t.Errorf(err.Error())
 	}
-
-	expectedCategory := categoryRepo.Find(newCategory.ID)
-	if expectedCategory.Name != mockedUpdatedName {
-		t.Errorf("CategoryService.Update() failed to update data")
-	}
 }
 
 func TestCategoryServiceDelete(t *testing.T) {
-	categoryRepo := &mockCategoryRepository{}
-	categoryRepo.Construct()
-
+	categoryRepo := &localMock.CategoryRepositoryMock{}
 	categoryService := &CategoryService{
 		repo: categoryRepo,
 	}
 
-	mockedCategoryName := _testFaker.Lorem().Word()
-	newCategory, err := categoryService.Create(mockedCategoryName)
+	payload := uint(1)
+	categoryRepo.On("Delete", payload).Return(nil)
 
-	err = categoryService.Delete(newCategory.ID)
+	err := categoryService.Delete(payload)
 	if err != nil {
 		t.Errorf("CategoryService.Delete() failed with error")
 		t.Errorf(err.Error())
-	}
-
-	expectedCategory := categoryRepo.Find(newCategory.ID)
-	if expectedCategory.ID != 0 {
-		t.Errorf("CategoryService.Delete() failed to delete data")
 	}
 }
